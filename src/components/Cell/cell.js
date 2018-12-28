@@ -1,13 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import classes from './cell.module.css';
 
-class Cell extends Component {
-    render(){
-        return(
-            <div className={this.props.alive ? classes.CellActive : classes.CellInactive}>
-            </div>
-        );
-    }
+const Cell = (props) => {
+ return <div className={props.alive ? classes.CellActive : classes.CellInactive}></div>
 }
+        
+
 
 export default Cell;

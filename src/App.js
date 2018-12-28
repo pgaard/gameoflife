@@ -74,14 +74,31 @@ class App extends Component {
     });
   }
 
+  start = () => {
+    var intervalId = setInterval(this.timer, 500);
+    this.setState({ intervalId: intervalId});
+  }
+
+  stop = () => {
+    clearInterval(this.state.intervalId);
+  }
+
+  timer = () => {
+    this.step();
+  }
+
   regen = () => {
-    this.setState({cells: this.genRandom(this.state.gridSize)});
+    this.setState({
+      cells: this.genRandom(this.state.gridSize),
+      stepCount: 0
+    });
   }
 
   render() {
     return (
       <div className="App">
-        <button onClick={this.step}>Advance</button>
+        <button onClick={this.start}>Start</button>
+        <button onClick={this.stop}>Stop</button>
         <button onClick={this.regen}>Regen</button>
         <span className="stepCount">Steps: {this.state.stepCount}</span>
         <div className="TheGrid">

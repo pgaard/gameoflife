@@ -30,3 +30,8 @@
     transform: rotate(360deg);
   }
 }
+
+.TheGrid {
+  margin:10px auto;
+  width:50%;
+}

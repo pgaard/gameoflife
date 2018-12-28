@@ -28,18 +28,16 @@ class App extends Component {
 
   numberOfNeighbors(cells, row, column, gridSize) {
     var number = 0;
-    const rowStart = row - 1 < 0 ? 0 : row - 1;
-    const rowEnd = row + 1 > gridSize - 1 ? gridSize - 1 : row + 1;
-    const columnStart = column - 1 < 0 ? 0 : column - 1;
-    const columnEnd = column + 1 > gridSize - 1 ? gridSize - 1 : column + 1;
-
-    for(var r=rowStart; r<=rowEnd; r++){
-      for(var c=columnStart; c<=columnEnd; c++){
-        if(row === r && column === c) {
+   
+    for(var r = row - 1 ; r <= row + 1 ; r++){
+      for(var c = column - 1; c <= column + 1; c++){
+        const wrapRow = r < 0 ? gridSize - 1 : r > gridSize - 1 ? 0 : r;
+        const wrapColumn = c < 0 ? gridSize - 1 : c > gridSize - 1 ? 0 : c;
+        if(row === wrapRow && column === wrapColumn) {
           continue;
         }
 
-        if(cells[r][c]){
+        if(cells[wrapRow][wrapColumn]){
           number++;
         }
       }
@@ -88,8 +86,9 @@ class App extends Component {
   }
 
   regen = () => {
+    const cells = this.genRandom(this.state.gridSize);
     this.setState({
-      cells: this.genRandom(this.state.gridSize),
+      cells: cells,
       stepCount: 0
     });
   }

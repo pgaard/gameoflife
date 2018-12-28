@@ -35,3 +35,8 @@
   margin:10px auto;
   width:50%;
 }
+
+.stepCount {
+  padding:5px;
+  font-size: 12px;
+}

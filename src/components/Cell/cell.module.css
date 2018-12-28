@@ -1,5 +1,11 @@
-.Cell {
-    flex: 1;
+.CellActive {
+    flex: 1 0 0px;
+    border: 1px solid #eee;
+    background-color:black;
+}
+
+.CellInactive{
+    flex: 1 0 0px;
     border: 1px solid #eee;
     background-color:white;
 }

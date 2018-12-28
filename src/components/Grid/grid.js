@@ -5,9 +5,9 @@ import classes from './grid.module.css';
 class Grid extends Component {
 
     render(){
-        return this.props.cells.map((row) => {
+        return this.props.cells.map((row, index) => {
             return ( 
-            <div className={classes.Grid}>
+            <div className={classes.Grid} key={index}>
                 <Row row={row}></Row>
             </div>
             )

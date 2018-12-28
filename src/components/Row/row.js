@@ -2,8 +2,8 @@ import React from 'react';
 import Cell from '../Cell/cell'
 
 const row = (props) => {
-    return props.row.map((cell) => {
-        return <Cell alive={cell}></Cell>
+    return props.row.map((cell, index) => {
+        return <Cell alive={cell} key={index}></Cell>
     })
 }
 

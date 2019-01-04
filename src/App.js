@@ -9,10 +9,23 @@ class App extends Component {
     const gridSize = 40;
     this.state = {
       gridSize: gridSize,
-      cells: this.genRandom(gridSize),
+      cells: this.genBlank(gridSize),
       stepCount: 0
     };
   }
+
+  genBlank(gridSize){
+    const cells = [];
+    for(var i=0; i<gridSize; i++){
+      const row = [];
+      for(var j=0; j<gridSize; j++){
+        row.push(0);
+      }
+      cells.push(row);
+    }
+    return cells;
+  }
+
 
   genRandom(gridSize){
     const cells = [];
@@ -24,6 +37,11 @@ class App extends Component {
       cells.push(row);
     }
     return cells;
+  }
+
+  cellClickedHandler = (row, column) => {
+    console.log("clicked cell " + row + " " + column);
+    this.toggleCell(row, column);
   }
 
   numberOfNeighbors(cells, row, column, gridSize) {
@@ -56,16 +74,42 @@ class App extends Component {
     return (number === 3);
   }
 
+  copyCells(newSize, oldSize) {
+    if(!oldSize){
+      oldSize = newSize;
+    }
+    const cells = [];
+    for(var i=0; i<newSize; i++){
+      cells[i] = [];
+      for(var j=0; j<newSize; j++){
+        let val = (i < oldSize && j < oldSize) ? this.state.cells[i][j] : 0;
+        cells[i].push(val);
+      }
+    }
+    return cells;
+  }
+
+  toggleCell(row, column){
+    const gridSize = this.state.gridSize;
+    const cells = this.copyCells(gridSize);
+    cells[row][column] = cells[row][column] ? 0 : 1;
+   
+    this.setState({
+      cells : cells
+    });
+  }
+
   step = () => {
     const gridSize = this.state.gridSize;
     const stepCount = this.state.stepCount + 1;
-    const cells = [];
+    const cells = this.copyCells(gridSize);
+
     for(var i=0; i<gridSize; i++){
-      cells[i] = [];
       for(var j=0; j<gridSize; j++){
-        cells[i].push(this.newCellValue(this.state.cells, i, j, gridSize));
+        cells[i][j] = this.newCellValue(this.state.cells, i, j, gridSize);
       }
     }
+
     this.setState({
       cells : cells,
       stepCount: stepCount 
@@ -93,15 +137,39 @@ class App extends Component {
     });
   }
 
+  resize = (event) => {
+    const newSize = event.target.value;
+    const newCells = this.copyCells(newSize, this.state.gridSize);
+    this.setState({
+      gridSize: newSize,
+      cells: newCells
+    });
+  }
+
+  clear = () => {
+    const gridSize = this.state.gridSize;
+    const cells =  this.genBlank(gridSize);
+    this.setState({
+      gridSize: gridSize,
+      cells: cells,
+      stepCount: 0
+    });
+  }
+
   render() {
     return (
       <div className="App">
         <button onClick={this.start}>Start</button>
         <button onClick={this.stop}>Stop</button>
         <button onClick={this.regen}>Regen</button>
+        <button onClick={this.clear}>Clear</button>
+        <input type="number" onChange={this.resize} value={this.state.gridSize}></input>
         <span className="stepCount">Steps: {this.state.stepCount}</span>
         <div className="TheGrid">
-          <Grid cells={this.state.cells} gridSize={this.state.gridSize}>
+          <Grid
+            cellClicked={this.cellClickedHandler} 
+            cells={this.state.cells} 
+            gridSize={this.state.gridSize}>
           </Grid>
         </div>
       </div>

@@ -1,10 +1,9 @@
 import React from 'react';
 import classes from './cell.module.css';
 
-const Cell = (props) => {
- return <div className={props.alive ? classes.CellActive : classes.CellInactive}></div>
-}
-        
-
+const Cell = (props) => 
+    <div onClick={props.click} 
+        className={props.alive ? classes.CellActive : classes.CellInactive}>
+    </div>
 
 export default Cell;

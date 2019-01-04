@@ -8,9 +8,11 @@ class Grid extends Component {
         return this.props.cells.map((row, rowIndex) => {
             return ( 
                 <div className={classes.Grid} key={rowIndex}>
-                    {row.map((cell, cellIndex) => {
-                        return <Cell alive={cell} key={cellIndex}></Cell>
-                    })}
+                    {
+                        row.map((cell, cellIndex) => {
+                            return <Cell click={() => this.props.cellClicked(rowIndex, cellIndex)} alive={cell} key={cellIndex}></Cell>
+                        })
+                    }
                 </div>
             )
         });

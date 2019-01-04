@@ -82,7 +82,7 @@ class App extends Component {
     for(var i=0; i<newSize; i++){
       cells[i] = [];
       for(var j=0; j<newSize; j++){
-        let val = (i < oldSize && j < oldSize) ? this.state.cells[i][j] : 0;
+        let val = (i < this.state.cells.length && j < this.state.cells[i].length) ? this.state.cells[i][j] : 0;
         cells[i].push(val);
       }
     }
@@ -138,7 +138,7 @@ class App extends Component {
   }
 
   resize = (event) => {
-    const newSize = event.target.value;
+    let newSize = event.target.value;
     const newCells = this.copyCells(newSize, this.state.gridSize);
     this.setState({
       gridSize: newSize,

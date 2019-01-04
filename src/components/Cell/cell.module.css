@@ -1,11 +1,19 @@
 .CellActive {
-    flex: 1 0 0px;
+    flex: 1 0 auto;
+    height: auto;
     border: 1px solid #eee;
     background-color:black;
 }
 
 .CellInactive{
-    flex: 1 0 0px;
+    flex: 1 0 auto;
+    height: auto;
     border: 1px solid #eee;
     background-color:white;
+}
+
+.CellActive:before, .CellInactive:before {
+    content:'';
+    float:left;
+    padding-top:100%;
 }

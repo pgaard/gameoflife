@@ -15,26 +15,29 @@ class App extends Component {
   }
 
   genBlank(gridSize){
-    const cells = [];
+    if(gridSize < 1){
+      gridSize = 1;
+    }
+    const cells = new Array(gridSize);
     for(var i=0; i<gridSize; i++){
-      const row = [];
+      const row = new Array(gridSize);
       for(var j=0; j<gridSize; j++){
-        row.push(0);
+        row[j] = 0;
       }
-      cells.push(row);
+      cells[i] = row;
     }
     return cells;
   }
 
 
   genRandom(gridSize){
-    const cells = [];
+    const cells = new Array(gridSize);
     for(var i=0; i<gridSize; i++){
-      const row = [];
+      const row = new Array(gridSize);
       for(var j=0; j<gridSize; j++){
-        row.push(Math.random() > .5 ? 1 : 0);
+        row[j] = Math.random() > .5 ? 1 : 0;
       }
-      cells.push(row);
+      cells[i] = row;
     }
     return cells;
   }
@@ -78,12 +81,12 @@ class App extends Component {
     if(!oldSize){
       oldSize = newSize;
     }
-    const cells = [];
+    const cells = this.genBlank(newSize);
     for(var i=0; i<newSize; i++){
-      cells[i] = [];
+      cells[i] = new Array(newSize);
       for(var j=0; j<newSize; j++){
         let val = (i < this.state.cells.length && j < this.state.cells[i].length) ? this.state.cells[i][j] : 0;
-        cells[i].push(val);
+        cells[i][j] = val;
       }
     }
     return cells;
@@ -102,7 +105,7 @@ class App extends Component {
   step = () => {
     const gridSize = this.state.gridSize;
     const stepCount = this.state.stepCount + 1;
-    const cells = this.copyCells(gridSize);
+    const cells = this.genBlank(gridSize);
 
     for(var i=0; i<gridSize; i++){
       for(var j=0; j<gridSize; j++){
@@ -117,7 +120,7 @@ class App extends Component {
   }
 
   start = () => {
-    var intervalId = setInterval(this.timer, 500);
+    var intervalId = setInterval(this.timer, 10);
     this.setState({ intervalId: intervalId});
   }
 

@@ -1,14 +1,12 @@
 .CellActive {
     flex: 1 0 auto;
     height: auto;
-    border: 1px solid #eee;
     background-color:black;
 }
 
 .CellInactive{
     flex: 1 0 auto;
     height: auto;
-    border: 1px solid #eee;
     background-color:white;
 }
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Grid from './components/Grid/grid';
+import Button from './components/Controls/Button/button';
 
 class App extends Component {
   constructor(props){
@@ -10,7 +11,9 @@ class App extends Component {
     this.state = {
       gridSize: gridSize,
       cells: this.genBlank(gridSize),
-      stepCount: 0
+      stepCount: 0,
+      timePerStep: 0,
+      startStep: 0
     };
   }
 
@@ -60,6 +63,9 @@ class App extends Component {
 
         if(cells[wrapRow][wrapColumn]){
           number++;
+          if(number > 3){
+            return number;
+          }
         }
       }
     }
@@ -70,11 +76,11 @@ class App extends Component {
   newCellValue(cells, row, column, gridSize){
     var number = this.numberOfNeighbors(cells, row, column, gridSize);
 
-    if(cells[row][column]){
-      return (number === 2 || number === 3);
+    if (number === 3){
+      return true;
     }
-
-    return (number === 3);
+    
+    return (number === 2 && cells[row][column]);
   }
 
   copyCells(newSize, oldSize) {
@@ -120,11 +126,20 @@ class App extends Component {
   }
 
   start = () => {
-    var intervalId = setInterval(this.timer, 10);
-    this.setState({ intervalId: intervalId});
+    const intervalId = setInterval(this.timer, 10);
+    const startTime = new Date().getTime();
+    const startStep = this.state.stepCount;
+    this.setState({ 
+      intervalId: intervalId,
+      startTime: startTime,
+      startStep: startStep
+    });
   }
 
   stop = () => {
+    const stopTime = new Date().getTime();
+    const timePerStep = Math.floor((stopTime - this.state.startTime)/(this.state.stepCount - this.state.startStep));
+    this.setState({timePerStep: timePerStep});
     clearInterval(this.state.intervalId);
   }
 
@@ -162,12 +177,13 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <button onClick={this.start}>Start</button>
-        <button onClick={this.stop}>Stop</button>
-        <button onClick={this.regen}>Regen</button>
-        <button onClick={this.clear}>Clear</button>
+        <Button click={this.start}>Start</Button>
+        <Button click={this.stop}>Stop</Button>
+        <Button click={this.regen}>Regen</Button>
+        <Button click={this.clear}>Clear</Button>
         <input type="number" onChange={this.resize} value={this.state.gridSize}></input>
         <span className="stepCount">Steps: {this.state.stepCount}</span>
+        <span className="stepCount">ms per Step: {this.state.timePerStep}</span>
         <div className="TheGrid">
           <Grid
             cellClicked={this.cellClickedHandler} 

@@ -177,19 +177,26 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Button click={this.start}>Start</Button>
-        <Button click={this.stop}>Stop</Button>
-        <Button click={this.regen}>Regen</Button>
-        <Button click={this.clear}>Clear</Button>
-        <input type="number" onChange={this.resize} value={this.state.gridSize}></input>
-        <span className="stepCount">Steps: {this.state.stepCount}</span>
-        <span className="stepCount">ms per Step: {this.state.timePerStep}</span>
-        <div className="TheGrid">
-          <Grid
-            cellClicked={this.cellClickedHandler} 
-            cells={this.state.cells} 
-            gridSize={this.state.gridSize}>
-          </Grid>
+        <header>test</header>
+        <div className="body">
+          <div className="leftControls">
+            <Button click={this.start}>Start</Button>
+            <Button click={this.stop}>Stop</Button>
+            <Button click={this.regen}>Regen</Button>
+            <Button click={this.clear}>Clear</Button>
+            <input type="number" onChange={this.resize} value={this.state.gridSize}></input>
+            <span className="stepCount">Steps: {this.state.stepCount}</span>
+            <span className="stepCount">ms per Step: {this.state.timePerStep}</span>
+          </div>
+          <div className="content">
+            <Grid
+              cellClicked={this.cellClickedHandler} 
+              cells={this.state.cells} 
+              gridSize={this.state.gridSize}>
+            </Grid>
+          </div>
+          <div className="rightContent">
+          </div>
         </div>
       </div>
     );

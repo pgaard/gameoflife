@@ -13,7 +13,9 @@ class App extends Component {
       cells: this.genBlank(gridSize),
       stepCount: 0,
       timePerStep: 0,
-      startStep: 0
+      startStep: 0,
+      stepDelay: 10,
+      running: false
     };
   }
 
@@ -46,7 +48,6 @@ class App extends Component {
   }
 
   cellClickedHandler = (row, column) => {
-    console.log("clicked cell " + row + " " + column);
     this.toggleCell(row, column);
   }
 
@@ -119,32 +120,52 @@ class App extends Component {
       }
     }
 
+    const timePerStep = this.getTimePerStep();
+
     this.setState({
       cells : cells,
-      stepCount: stepCount 
+      stepCount: stepCount,
+      timePerStep: timePerStep
     });
   }
 
   start = () => {
-    const intervalId = setInterval(this.timer, 10);
+    setTimeout(this.timer, this.state.stepDelay);
     const startTime = new Date().getTime();
     const startStep = this.state.stepCount;
     this.setState({ 
-      intervalId: intervalId,
+      running: true,
       startTime: startTime,
-      startStep: startStep
+      startStep: startStep,
+      running: true
     });
   }
 
-  stop = () => {
+  getTimePerStep = () => {
+    if(this.state.stepCount === this.state.startStep){
+      return 0;
+    }
     const stopTime = new Date().getTime();
-    const timePerStep = Math.floor((stopTime - this.state.startTime)/(this.state.stepCount - this.state.startStep));
-    this.setState({timePerStep: timePerStep});
-    clearInterval(this.state.intervalId);
+    return Math.floor((stopTime - this.state.startTime)/(this.state.stepCount - this.state.startStep));
+  }
+
+  stop = () => {
+    const timePerStep = this.getTimePerStep();
+    
+    clearInterval(this.state.intervalId);    
+
+    this.setState({
+      timePerStep: timePerStep,
+      running: false
+    });
   }
 
   timer = () => {
     this.step();
+
+    if(this.state.running){
+      setTimeout(this.timer, this.state.stepDelay);
+    }
   }
 
   regen = () => {
@@ -174,19 +195,33 @@ class App extends Component {
     });
   }
 
+  changeDelay = (event) => {
+    let newDelay = event.target.value;    
+    this.setState({
+      stepDelay: newDelay
+    });
+  }
+
   render() {
     return (
       <div className="App">
-        <header>test</header>
+        <header>React Game of Life</header>
         <div className="body">
           <div className="leftControls">
             <Button click={this.start}>Start</Button>
             <Button click={this.stop}>Stop</Button>
             <Button click={this.regen}>Regen</Button>
-            <Button click={this.clear}>Clear</Button>
-            <input type="number" onChange={this.resize} value={this.state.gridSize}></input>
+            <Button click={this.clear}>Clear</Button>            
+            <span className="stepCount">Dimensions: {this.state.gridSize} x {this.state.gridSize}</span>
+            <div className="slideContainer">
+              <input className="slider" type="range" min="10" max="400" onChange={this.resize} value={this.state.gridSize}></input>
+            </div>              
+            <span className="stepCount">Step Delay: {this.state.stepDelay} ms</span>
+            <div className="slideContainer">
+              <input className="slider" type="range" min="1" max="1000" onChange={this.changeDelay} value={this.state.stepDelay}></input>
+            </div>            
             <span className="stepCount">Steps: {this.state.stepCount}</span>
-            <span className="stepCount">ms per Step: {this.state.timePerStep}</span>
+            <span className="stepCount">Ms per Step: {this.state.timePerStep}</span>
           </div>
           <div className="content">
             <Grid

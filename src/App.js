@@ -47,10 +47,6 @@ class App extends Component {
     return cells;
   }
 
-  cellClickedHandler = (row, column) => {
-    this.toggleCell(row, column);
-  }
-
   numberOfNeighbors(cells, row, column, gridSize) {
     var number = 0;
    
@@ -99,11 +95,19 @@ class App extends Component {
     return cells;
   }
 
-  toggleCell(row, column){
+  toggleCellHandler = (row, column) => {
+    this.setCellHandler(row, column, this.state.cells[row][column] ? 0 : 1);
+  }
+
+  setCellHandler = (row, column, active) => {
+    if(this.state.cells[row][column] === active){
+      return;
+    }
+
     const gridSize = this.state.gridSize;
     const cells = this.copyCells(gridSize);
-    cells[row][column] = cells[row][column] ? 0 : 1;
-   
+    cells[row][column] = active;
+
     this.setState({
       cells : cells
     });
@@ -136,8 +140,7 @@ class App extends Component {
     this.setState({ 
       running: true,
       startTime: startTime,
-      startStep: startStep,
-      running: true
+      startStep: startStep
     });
   }
 
@@ -205,9 +208,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header>React Game of Life</header>
+        <header></header>
         <div className="body">
           <div className="leftControls">
+            <span>React Game of Life</span>
             <Button click={this.start}>Start</Button>
             <Button click={this.stop}>Stop</Button>
             <Button click={this.regen}>Regen</Button>
@@ -225,7 +229,8 @@ class App extends Component {
           </div>
           <div className="content">
             <Grid
-              cellClicked={this.cellClickedHandler} 
+              cellClicked={this.toggleCellHandler} 
+              setCell={this.setCellHandler}
               cells={this.state.cells} 
               gridSize={this.state.gridSize}>
             </Grid>

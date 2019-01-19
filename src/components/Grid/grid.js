@@ -4,6 +4,28 @@ import classes from './grid.module.css';
 
 class Grid extends Component {
 
+    constructor(props){
+        super(props);
+    
+        this.state = {
+            drawing: false
+        };
+    }
+        
+    mouseDown(){
+        this.setState({drawing: true});
+    }
+
+    mouseUp(){
+        this.setState({drawing: false});
+    }
+
+    mouseOver(rowIndex, columnIndex){
+        if(this.state.drawing){
+            this.props.setCell(rowIndex, columnIndex, 1);
+        }
+    }
+
     render(){
         const border = this.props.gridSize < 125;
         return (
@@ -15,7 +37,10 @@ class Grid extends Component {
                             {
                                 row.map((cell, cellIndex) => {
                                     return <Cell 
-                                                click={() => this.props.cellClicked(rowIndex, cellIndex)} 
+                                                click={() => this.props.cellClicked(rowIndex, cellIndex)}
+                                                mouseDown={() => this.mouseDown()}
+                                                mouseUp={() => this.mouseUp()} 
+                                                mouseOver={() => this.mouseOver(rowIndex, cellIndex)}
                                                 alive={cell}
                                                 key={cellIndex}>
                                             </Cell>

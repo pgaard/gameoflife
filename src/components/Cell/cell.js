@@ -10,6 +10,9 @@ class Cell extends Component
     render(){
         return(
             <div onClick={this.props.click} 
+                onMouseDown={this.props.mouseDown}
+                onMouseUp={this.props.mouseUp}
+                onMouseOver={this.props.mouseOver}
                 className={this.props.alive ? classes.CellActive : classes.CellInactive}>
             </div>
         );

@@ -1,16 +1,6 @@
 import * as actionTypes from './actions/actionTypes';
 import { updateObject } from './utility.js';
 
-const initialState = {
-    gridSize: 40,
-    cells: genBlank(40),
-    stepCount: 0,
-    timePerStep: 0,
-    startStep: 0,
-    stepDelay: 10,
-    running: false
-};
-
 const genBlank = (gridSize) => {
     if(gridSize < 1){
       gridSize = 1;
@@ -25,6 +15,16 @@ const genBlank = (gridSize) => {
     }
     return cells;
 }
+
+const initialState = {
+  gridSize: 40,
+  cells: genBlank(40),
+  stepCount: 0,
+  timePerStep: 0,
+  startStep: 0,
+  stepDelay: 10,
+  running: false
+};
 
 const genRandom = (gridSize) => {
     const cells = new Array(gridSize);
@@ -62,7 +62,7 @@ const numberOfNeighbors = (cells, row, column, gridSize) => {
 }
 
 const newCellValue = (cells, row, column, gridSize) => {
-    var number = this.numberOfNeighbors(cells, row, column, gridSize);
+    var number = numberOfNeighbors(cells, row, column, gridSize);
 
     if (number === 3){
       return true;
@@ -71,27 +71,27 @@ const newCellValue = (cells, row, column, gridSize) => {
     return (number === 2 && cells[row][column]);
   }
 
-const copyCells = (newSize, oldSize) => {
+const copyCells = (state, newSize, oldSize) => {
     if(!oldSize){
       oldSize = newSize;
     }
-    const cells = this.genBlank(newSize);
+    const cells = genBlank(newSize);
     for(var i=0; i<newSize; i++){
       cells[i] = new Array(newSize);
       for(var j=0; j<newSize; j++){
-        let val = (i < this.state.cells.length && j < this.state.cells[i].length) ? this.state.cells[i][j] : 0;
+        let val = (i < state.cells.length && j < state.cells[i].length) ? state.cells[i][j] : 0;
         cells[i][j] = val;
       }
     }
     return cells;
 }
 
-const toggleCellHandler = (row, column) => {
-    this.setCellHandler(row, column, this.state.cells[row][column] ? 0 : 1);
+const toggleCellHandler = (state, row, column) => {
+    setCellHandler(state.cells, column, state.cells[row][column] ? 0 : 1);
 }
 
-const setCellHandler = (row, column, active) => {
-    if(this.state.cells[row][column] === active){
+const setCellHandler = (cells, row, column, active) => {
+    if(cells[row][column] === active){
       return;
     }
 }
@@ -134,16 +134,16 @@ const stop = (state) => {
 }
 
 const regen = (state) => {
-  const cells = this.genRandom(state.gridSize);
+  const cells = genRandom(state.gridSize);
   return{
     cells: cells,
     stepCount: 0
   };
 }
 
-const resize = (event) => {
+const resize = (state, event) => {
   let newSize = event.target.value;
-  const newCells = this.copyCells(newSize, this.state.gridSize);
+  const newCells = copyCells(state, newSize, state.gridSize);
   return{
     gridSize: newSize,
     cells: newCells
@@ -152,7 +152,7 @@ const resize = (event) => {
 
 const clear = (state) => {
   const gridSize = state.gridSize;
-  const cells =  this.genBlank(gridSize);
+  const cells =  genBlank(gridSize);
   return{
     gridSize: gridSize,
     cells: cells,
@@ -189,8 +189,15 @@ const reducer = ( state = initialState, action ) => {
                 state,
                 stop(state)
             );
+
+        case actionTypes.REGEN:
+            return updateObject(
+              state,
+              regen(state)
+            )
+        default:
+            return state;
     }
-    return state;
 };
 
 export default reducer;

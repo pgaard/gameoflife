@@ -18,6 +18,12 @@ export const stop = () => {
     }
 }
 
+export const regen = () => {
+    return {
+        type: actionTypes.REGEN
+    }
+}
+
 /*
 let timer = null;
 

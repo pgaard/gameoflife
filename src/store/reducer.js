@@ -141,8 +141,7 @@ const regen = (state) => {
   };
 }
 
-const resize = (state, event) => {
-  let newSize = event.target.value;
+const resize = (newSize, state) => {
   const newCells = copyCells(state, newSize, state.gridSize);
   return{
     gridSize: newSize,
@@ -160,10 +159,9 @@ const clear = (state) => {
   };
 }
 
-const changeDelay = (event) => {
-  let newDelay = event.target.value;    
+const changeDelay = (delay) => { 
   return{
-    stepDelay: newDelay
+    stepDelay: delay
   };
 }
 
@@ -195,6 +193,19 @@ const reducer = ( state = initialState, action ) => {
               state,
               regen(state)
             )
+
+        case actionTypes.RESIZE:
+              return updateObject(
+                  state,
+                  resize(action.size, state)
+              );
+
+        case actionTypes.DELAY:
+              return updateObject(
+                  state,
+                  changeDelay(action.delay)
+              );
+          
         default:
             return state;
     }

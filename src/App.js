@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import './App.css';
 import Grid from './components/Grid/grid';
 import Button from './components/Controls/Button/button';
+import * as actionTypes from './store/actions/actionTypes';
 import * as actions from './store/actions/actionCreators';
 
 class App extends Component {
@@ -26,7 +27,13 @@ class App extends Component {
   }
 
   resize = (event) => {
-    let newSize = event.target.value;
+    let newSize = parseInt(event.target.value);
+    this.props.onResize(newSize);
+  }
+
+  changeDelay = (event) => {
+    let newDelay =  parseInt(event.target.value);    
+    this.props.onChangeDelay(newDelay);
   }
 
   render() {
@@ -74,15 +81,18 @@ const mapStateToProps = state => {
       stepDelay: state.stepDelay,
       gridSize: state.gridSize,
       stepCount: state.stepCount,
+      timePerStep: state.timePerStep
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-      onStart: () => dispatch( actions.start ),
-      onStop: () => dispatch( actions.stop ),
-      onStep: () => dispatch( actions.step ),
-      onRegen: () => dispatch( actions.regen ),
+      onStart: () => dispatch( { type: actionTypes.START } ),
+      onStop: () => dispatch( { type: actionTypes.STOP } ),
+      onStep: () => dispatch( { type: actionTypes.STEP } ),
+      onRegen: () => dispatch( { type: actionTypes.REGEN } ),
+      onResize: (newSize => dispatch( { type: actionTypes.RESIZE, size: newSize })),
+      onChangeDelay: (newDelay => dispatch( { type: actionTypes.DELAY, delay: newDelay })),
   };
 };
 

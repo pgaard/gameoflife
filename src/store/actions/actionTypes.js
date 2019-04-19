@@ -4,3 +4,6 @@ export const STOP = 'STOP';
 export const REGEN = 'REGEN';
 export const RESIZE = 'RESIZE';
 export const DELAY = 'DELAY';
+export const CLEAR = 'CLEAR';
+export const TOGGLE = 'TOGGLE';
+export const SET = 'SET';

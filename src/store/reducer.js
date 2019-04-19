@@ -87,13 +87,20 @@ const copyCells = (state, newSize, oldSize) => {
 }
 
 const toggleCellHandler = (state, row, column) => {
-    setCellHandler(state.cells, column, state.cells[row][column] ? 0 : 1);
+    return setCellHandler(state, row, column, state.cells[row][column] ? 0 : 1);
 }
 
-const setCellHandler = (cells, row, column, active) => {
-    if(cells[row][column] === active){
-      return;
+const setCellHandler = (state, row, column, active) => {
+    if(state.cells[row][column] === active){
+      return {};
     }
+
+    const cells = copyCells(state, state.gridSize);
+    cells[row][column] = active;
+
+    return {
+      cells
+    };
 }
 
 const getTimePerStep = (state) => {
@@ -150,10 +157,8 @@ const resize = (newSize, state) => {
 }
 
 const clear = (state) => {
-  const gridSize = state.gridSize;
-  const cells =  genBlank(gridSize);
+  const cells =  genBlank(state.gridSize);
   return{
-    gridSize: gridSize,
     cells: cells,
     stepCount: 0
   };
@@ -195,17 +200,35 @@ const reducer = ( state = initialState, action ) => {
             )
 
         case actionTypes.RESIZE:
-              return updateObject(
-                  state,
-                  resize(action.size, state)
-              );
+            return updateObject(
+                state,
+                resize(action.size, state)
+            );
 
         case actionTypes.DELAY:
-              return updateObject(
-                  state,
-                  changeDelay(action.delay)
-              );
-          
+            return updateObject(
+                state,
+                changeDelay(action.delay)
+            );
+
+        case actionTypes.CLEAR:
+            return updateObject(
+                state,
+                clear(state)
+            );
+
+        case actionTypes.TOGGLE:
+            return updateObject(
+                state,
+                toggleCellHandler(state, action.row, action.column)
+            );                 
+        
+        case actionTypes.SET:
+            return updateObject(
+                state,
+                setCellHandler(state, action.row, action.column, action.active)
+            );
+        
         default:
             return state;
     }

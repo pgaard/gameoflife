@@ -2,18 +2,18 @@ import * as actionTypes from './actions/actionTypes';
 import { updateObject } from './utility.js';
 
 const genBlank = (gridSize) => {
-    if(gridSize < 1){
-      gridSize = 1;
+  if (gridSize < 1) {
+    gridSize = 1;
+  }
+  const cells = new Array(gridSize);
+  for (var i = 0; i < gridSize; i++) {
+    const row = new Array(gridSize);
+    for (var j = 0; j < gridSize; j++) {
+      row[j] = 0;
     }
-    const cells = new Array(gridSize);
-    for(var i=0; i<gridSize; i++){
-      const row = new Array(gridSize);
-      for(var j=0; j<gridSize; j++){
-        row[j] = 0;
-      }
-      cells[i] = row;
-    }
-    return cells;
+    cells[i] = row;
+  }
+  return cells;
 }
 
 const initialState = {
@@ -27,109 +27,109 @@ const initialState = {
 };
 
 const genRandom = (gridSize) => {
-    const cells = new Array(gridSize);
-    for(var i=0; i<gridSize; i++){
-      const row = new Array(gridSize);
-      for(var j=0; j<gridSize; j++){
-        row[j] = Math.random() > .5 ? 1 : 0;
-      }
-      cells[i] = row;
+  const cells = new Array(gridSize);
+  for (var i = 0; i < gridSize; i++) {
+    const row = new Array(gridSize);
+    for (var j = 0; j < gridSize; j++) {
+      row[j] = Math.random() > .5 ? 1 : 0;
     }
-    return cells;
+    cells[i] = row;
+  }
+  return cells;
 }
 
 const numberOfNeighbors = (cells, row, column, gridSize) => {
-    var number = 0;
-   
-    for(var r = row - 1 ; r <= row + 1 ; r++){
-      for(var c = column - 1; c <= column + 1; c++){
-        const wrapRow = r < 0 ? gridSize - 1 : r > gridSize - 1 ? 0 : r;
-        const wrapColumn = c < 0 ? gridSize - 1 : c > gridSize - 1 ? 0 : c;
-        if(row === wrapRow && column === wrapColumn) {
-          continue;
-        }
+  var number = 0;
 
-        if(cells[wrapRow][wrapColumn]) {
-          number++;
-          if(number > 3){
-            return number;
-          }
+  for (var r = row - 1; r <= row + 1; r++) {
+    for (var c = column - 1; c <= column + 1; c++) {
+      const wrapRow = r < 0 ? gridSize - 1 : r > gridSize - 1 ? 0 : r;
+      const wrapColumn = c < 0 ? gridSize - 1 : c > gridSize - 1 ? 0 : c;
+      if (row === wrapRow && column === wrapColumn) {
+        continue;
+      }
+
+      if (cells[wrapRow][wrapColumn]) {
+        number++;
+        if (number > 3) {
+          return number;
         }
       }
     }
+  }
 
-    return number;
+  return number;
 }
 
 const newCellValue = (cells, row, column, gridSize) => {
-    var number = numberOfNeighbors(cells, row, column, gridSize);
+  var number = numberOfNeighbors(cells, row, column, gridSize);
 
-    if (number === 3){
-      return true;
-    }
-    
-    return (number === 2 && cells[row][column]);
+  if (number === 3) {
+    return true;
   }
 
+  return (number === 2 && cells[row][column]);
+}
+
 const copyCells = (state, newSize, oldSize) => {
-    if(!oldSize){
-      oldSize = newSize;
+  if (!oldSize) {
+    oldSize = newSize;
+  }
+  const cells = genBlank(newSize);
+  for (var i = 0; i < newSize; i++) {
+    cells[i] = new Array(newSize);
+    for (var j = 0; j < newSize; j++) {
+      let val = (i < state.cells.length && j < state.cells[i].length) ? state.cells[i][j] : 0;
+      cells[i][j] = val;
     }
-    const cells = genBlank(newSize);
-    for(var i=0; i<newSize; i++){
-      cells[i] = new Array(newSize);
-      for(var j=0; j<newSize; j++){
-        let val = (i < state.cells.length && j < state.cells[i].length) ? state.cells[i][j] : 0;
-        cells[i][j] = val;
-      }
-    }
-    return cells;
+  }
+  return cells;
 }
 
 const toggleCellHandler = (state, row, column) => {
-    return setCellHandler(state, row, column, state.cells[row][column] ? 0 : 1);
+  return setCellHandler(state, row, column, state.cells[row][column] ? 0 : 1);
 }
 
 const setCellHandler = (state, row, column, active) => {
-    if(state.cells[row][column] === active){
-      return {};
-    }
+  if (state.cells[row][column] === active) {
+    return {};
+  }
 
-    const cells = copyCells(state, state.gridSize);
-    cells[row][column] = active;
+  const cells = copyCells(state, state.gridSize);
+  cells[row][column] = active;
 
-    return {
-      cells
-    };
+  return {
+    cells
+  };
 }
 
 const getTimePerStep = (state) => {
-  if(state.stepCount === state.startStep){
+  if (state.stepCount === state.startStep) {
     return 0;
   }
   const stopTime = new Date().getTime();
-  return Math.floor((stopTime - state.startTime)/(state.stepCount - state.startStep));
+  return Math.floor((stopTime - state.startTime) / (state.stepCount - state.startStep));
 }
 
 const step = (state) => {
 
-    const gridSize = state.gridSize;
-    const stepCount = state.stepCount + 1;
-    const cells = genBlank(gridSize);
+  const gridSize = state.gridSize;
+  const stepCount = state.stepCount + 1;
+  const cells = genBlank(gridSize);
 
-    for(var i=0; i<gridSize; i++){
-      for(var j=0; j<gridSize; j++){
-        cells[i][j] = newCellValue(state.cells, i, j, gridSize);
-      }
+  for (var i = 0; i < gridSize; i++) {
+    for (var j = 0; j < gridSize; j++) {
+      cells[i][j] = newCellValue(state.cells, i, j, gridSize);
     }
+  }
 
-    const timePerStep = getTimePerStep(state);
+  const timePerStep = getTimePerStep(state);
 
-    return {
-        cells : cells,
-        stepCount: stepCount,
-        timePerStep: timePerStep
-    };
+  return {
+    cells: cells,
+    stepCount: stepCount,
+    timePerStep: timePerStep
+  };
 }
 
 const stop = (state) => {
@@ -142,7 +142,7 @@ const stop = (state) => {
 
 const regen = (state) => {
   const cells = genRandom(state.gridSize);
-  return{
+  return {
     cells: cells,
     stepCount: 0
   };
@@ -150,88 +150,88 @@ const regen = (state) => {
 
 const resize = (newSize, state) => {
   const newCells = copyCells(state, newSize, state.gridSize);
-  return{
+  return {
     gridSize: newSize,
     cells: newCells
   };
 }
 
 const clear = (state) => {
-  const cells =  genBlank(state.gridSize);
-  return{
+  const cells = genBlank(state.gridSize);
+  return {
     cells: cells,
     stepCount: 0
   };
 }
 
-const changeDelay = (delay) => { 
-  return{
+const changeDelay = (delay) => {
+  return {
     stepDelay: delay
   };
 }
 
-const reducer = ( state = initialState, action ) => {
-    switch ( action.type ) {
-        case actionTypes.START : 
-            return updateObject( 
-                state, 
-                { 
-                    running: true,
-                    startTime: new Date().getTime(),
-                    startStep: state.stepCount  
-                });
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case actionTypes.START:
+      return updateObject(
+        state,
+        {
+          running: true,
+          startTime: new Date().getTime(),
+          startStep: state.stepCount
+        });
 
-        case actionTypes.STEP : 
-            return updateObject(
-                state,
-                step(state)
-            ); 
+    case actionTypes.STEP:
+      return updateObject(
+        state,
+        step(state)
+      );
 
-        case actionTypes.STOP :
-            return updateObject(
-                state,
-                stop(state)
-            );
+    case actionTypes.STOP:
+      return updateObject(
+        state,
+        stop(state)
+      );
 
-        case actionTypes.REGEN:
-            return updateObject(
-              state,
-              regen(state)
-            )
+    case actionTypes.REGEN:
+      return updateObject(
+        state,
+        regen(state)
+      )
 
-        case actionTypes.RESIZE:
-            return updateObject(
-                state,
-                resize(action.size, state)
-            );
+    case actionTypes.RESIZE:
+      return updateObject(
+        state,
+        resize(action.size, state)
+      );
 
-        case actionTypes.DELAY:
-            return updateObject(
-                state,
-                changeDelay(action.delay)
-            );
+    case actionTypes.DELAY:
+      return updateObject(
+        state,
+        changeDelay(action.delay)
+      );
 
-        case actionTypes.CLEAR:
-            return updateObject(
-                state,
-                clear(state)
-            );
+    case actionTypes.CLEAR:
+      return updateObject(
+        state,
+        clear(state)
+      );
 
-        case actionTypes.TOGGLE:
-            return updateObject(
-                state,
-                toggleCellHandler(state, action.row, action.column)
-            );                 
-        
-        case actionTypes.SET:
-            return updateObject(
-                state,
-                setCellHandler(state, action.row, action.column, action.active)
-            );
-        
-        default:
-            return state;
-    }
+    case actionTypes.TOGGLE:
+      return updateObject(
+        state,
+        toggleCellHandler(state, action.row, action.column)
+      );
+
+    case actionTypes.SET:
+      return updateObject(
+        state,
+        setCellHandler(state, action.row, action.column, action.active)
+      );
+
+    default:
+      return state;
+  }
 };
 
 export default reducer;
